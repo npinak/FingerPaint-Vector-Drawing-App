@@ -8,23 +8,26 @@ export default function Home() {
   const stageRef = useRef<any>()
 
   return (
-    <main id='main-page' style={{ height: '100%', padding: '8px' }}>
+    <main id='main-page' style={{ height: '100%', width:'100%' }}>
       <AppBar position='sticky'>
-        <Toolbar sx={{ height: '8%' }}></Toolbar>
+        <Toolbar sx={{ height: '50px' }}></Toolbar>
       </AppBar>
       <Container
+      disableGutters
         sx={{
           margin: 0,
           padding: '0px',
           backgroundColor: '#e5e5e5',
           display: 'flex',
-          height: '92%',
+          height: '100%',
+          width:'100%',
           justifyContent: 'space-around',
+          paddingX:'0px'
         }}
         maxWidth={false}
         id='main-container'
       >
-        <Toolbox />
+        {/* <Toolbox /> */}
         <Canvas stageRef={stageRef} />
       </Container>
     </main>

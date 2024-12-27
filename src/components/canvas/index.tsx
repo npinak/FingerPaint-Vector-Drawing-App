@@ -182,10 +182,9 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
       id='canvas-div'
       ref={stageContainerRef}
       sx={{
-        height: '90%',
-        width: '75%',
+        height: '100%',
+        width: '100%',
         backgroundColor: '#ffffff',
-        marginTop: '40px',
       }}
     >
       <Stage
