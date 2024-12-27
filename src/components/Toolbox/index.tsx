@@ -10,7 +10,11 @@ import { Pencil, Hand, Circle, Rectangle, ArrowUp } from '@phosphor-icons/react'
 
 const StyledButton = styled(Button)({
   height: '10%',
+  maxHeight: '50px',
+  minHeight: '40px',
   width: '10%',
+  minWidth: '75px',
+  maxWidth: '75px',
 })
 
 function Toolbox() {
@@ -44,12 +48,10 @@ function Toolbox() {
   return (
     <Box
       sx={{
-        height: '50%',
-        maxHeight: '600px',
+        height: '100%',
         width: '8%',
+        maxWidth: '100px',
         backgroundColor: '#f4f1de',
-        marginTop: '40px',
-        marginBottom: '40px',
         display: 'flex',
         justifyContent: 'space-evenly',
         alignItems: 'center',
@@ -80,15 +82,15 @@ function Toolbox() {
       <StyledButton onClick={handleToolSelection} id='SCRIBBLE'>
         <Pencil size={28} color='black' />
       </StyledButton>
-      <Button id='CIRCLE' onClick={handleToolSelection}>
+      <StyledButton id='CIRCLE' onClick={handleToolSelection}>
         <Circle size={28} color='black' />
-      </Button>
-      <Button id='RECTANGLE' onClick={handleToolSelection}>
+      </StyledButton>
+      <StyledButton id='RECTANGLE' onClick={handleToolSelection}>
         <Rectangle size={28} color='black' />
-      </Button>
-      <Button id='ARROW' onClick={handleToolSelection}>
+      </StyledButton>
+      <StyledButton id='ARROW' onClick={handleToolSelection}>
         <ArrowUp size={28} color='black' />
-      </Button>
+      </StyledButton>
       {/* <Button id='ERASER' onClick={handleToolSelection}>
         Eraser
       </Button> */}
