@@ -21,7 +21,7 @@ import type {
 import { KonvaEventObject } from 'konva/lib/Node'
 
 function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
-  const [fillColor, _setFillColor] = useState('#ff0000')
+  // const [fillColor, _setFillColor] = useState('#ff0000')
   const [rectangles, setRectangles] = useState<RectangleType[]>([])
   const [circles, setCircles] = useState<CircleType[]>([])
   const [scribbles, setScribbles] = useState<ScribbleType[]>([])
@@ -33,6 +33,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const currentShapeID = useRef<string>('')
   const strokeColor = '#000'
   const toolSelected = useAppSelector(state => state.toolSelection.value)
+  const fillColor = useAppSelector(state => state.toolSelection.color)
 
   const isDraggable = toolSelected === 'SELECT'
 
