@@ -28,4 +28,5 @@ export type ScribbleType = {
   points: number[]
   fillColor: string
   toolSelected: string
+  strokeWidth: number
 }

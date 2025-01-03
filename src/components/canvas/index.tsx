@@ -11,6 +11,7 @@ import {
   Transformer,
 } from 'react-konva'
 import { useAppSelector } from '@/utils/TypeScriptHooks'
+
 import { v4 as uuidv4 } from 'uuid'
 import type {
   RectangleType,
@@ -28,6 +29,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const isPainting = useRef<boolean>(false)
   const transformerRef = useRef<any>() //fix: find proper type
   const stageContainerRef = useRef<HTMLDivElement>()
+  const strokeWidth = useAppSelector(state => state.toolSelection.strokeWidth)
 
   const currentShapeID = useRef<string>('')
   const strokeColor = '#000'
@@ -168,6 +170,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             points: [x, y],
             fillColor,
             toolSelected,
+            strokeWidth,
             // todo add stroke Width
           },
         ])
@@ -181,6 +184,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             fillColor,
             toolSelected,
             // todo add stroke width
+            strokeWidth,
           },
         ])
         break
@@ -293,7 +297,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               points={scribble.points}
               stroke={strokeColor}
               // todo change to variable stroke width
-              strokeWidth={2}
+              strokeWidth={scribble.strokeWidth}
               fill={scribble.fillColor}
               onClick={onClick}
               onMouseEnter={() => {
