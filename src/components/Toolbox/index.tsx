@@ -24,7 +24,6 @@ function Toolbox() {
   const [highlightDivPos, setHighlightDivPos] = useState<DOMRect | undefined>()
   const selectedColor = useAppSelector(state => state.toolSelection.color)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-  console.log(selectedColor) //todo delete
 
   const buttonDimensionRef = useRef<HTMLButtonElement>(null)
 
@@ -108,9 +107,7 @@ function Toolbox() {
           aria-describedby={id}
           variant='contained'
           onClick={handleClick}
-        >
-          {/* todo change this to div with background of selected color */}
-        </Button>
+        ></Button>
         <Popover
           id={id}
           open={open}
