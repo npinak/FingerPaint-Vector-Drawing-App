@@ -1,12 +1,19 @@
 'use client'
 
-import { Box, Button, Popover } from '@mui/material'
+import { Box, Button, Popover, Slider } from '@mui/material'
 import React, { useState, useRef, useEffect } from 'react'
-import { select } from '@/store/toolSelection'
+import { select, setStrokeWidth } from '@/store/toolSelection'
 import { SliderPicker } from 'react-color'
 import { useAppDispatch } from '@/utils/TypeScriptHooks'
 import { styled } from '@mui/system'
-import { Pencil, Hand, Circle, Rectangle, ArrowUp } from '@phosphor-icons/react'
+import {
+  Pencil,
+  Hand,
+  Circle,
+  Rectangle,
+  ArrowUp,
+  Eraser,
+} from '@phosphor-icons/react'
 import { useAppSelector } from '@/utils/TypeScriptHooks'
 
 import { setColor } from '@/store/toolSelection'
@@ -24,8 +31,14 @@ function Toolbox() {
   const [highlightDivPos, setHighlightDivPos] = useState<DOMRect | undefined>()
   const selectedColor = useAppSelector(state => state.toolSelection.color)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+  const open = Boolean(anchorEl)
+  const id = open ? 'simple-popover' : undefined
 
   const buttonDimensionRef = useRef<HTMLButtonElement>(null)
+
+  const handleStrokeWidth = (_event: Event, value: number | Array<number>) => {
+    dispatch(setStrokeWidth(value))
+  }
 
   useEffect(() => {
     const dimensions = buttonDimensionRef.current?.getBoundingClientRect()
@@ -57,9 +70,6 @@ function Toolbox() {
   const handleClose = () => {
     setAnchorEl(null)
   }
-
-  const open = Boolean(anchorEl)
-  const id = open ? 'simple-popover' : undefined
 
   const handleChangeComplete = ({ hex }: { hex: string }) => {
     dispatch(setColor(hex))
@@ -140,6 +150,32 @@ function Toolbox() {
           </Box>
         </Popover>
       </div>
+      <Box
+        sx={{
+          height: '10%',
+          maxHeight: '50px',
+          minHeight: '40px',
+          width: '10%',
+          minWidth: '75px',
+          maxWidth: '75px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Slider
+          size='small'
+          defaultValue={70}
+          aria-label='Small'
+          valueLabelDisplay='auto'
+          onChange={handleStrokeWidth}
+        />
+      </Box>
+
+      <Box>
+        <StyledButton id='ERASER' onClick={handleToolSelection}>
+          <Eraser size={28} color='black' />
+        </StyledButton>
+      </Box>
 
       <StyledButton
         ref={buttonDimensionRef}

@@ -36,8 +36,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
 
   const isDraggable = toolSelected === 'SELECT'
 
-  //
-
   function onPointerMove() {
     if (toolSelected === 'SELECT' || !isPainting.current) return
 
@@ -74,6 +72,19 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
         })
         break
       case 'SCRIBBLE':
+        setScribbles(scribbles =>
+          scribbles.map(scribble => {
+            if (scribble.ID === currentShapeID.current) {
+              return {
+                ...scribble,
+                points: [...scribble.points, x, y],
+              }
+            }
+            return scribble
+          }),
+        )
+        break
+      case 'ERASER':
         setScribbles(scribbles =>
           scribbles.map(scribble => {
             if (scribble.ID === currentShapeID.current) {
@@ -156,6 +167,20 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             ID,
             points: [x, y],
             fillColor,
+            toolSelected,
+            // todo add stroke Width
+          },
+        ])
+        break
+      case 'ERASER':
+        setScribbles(scribbles => [
+          ...scribbles,
+          {
+            ID,
+            points: [x, y],
+            fillColor,
+            toolSelected,
+            // todo add stroke width
           },
         ])
         break
@@ -267,6 +292,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               lineJoin='round'
               points={scribble.points}
               stroke={strokeColor}
+              // todo change to variable stroke width
               strokeWidth={2}
               fill={scribble.fillColor}
               onClick={onClick}
@@ -280,6 +306,11 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                   stageContainerRef.current.style.cursor = 'default'
                 }
               }}
+              globalCompositeOperation={
+                scribble.toolSelected === 'ERASER'
+                  ? 'destination-out'
+                  : 'source-over'
+              }
             />
           ))}
           {arrows.map(arrow => (
