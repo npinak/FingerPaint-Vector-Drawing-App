@@ -36,6 +36,8 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
 
   const isDraggable = toolSelected === 'SELECT'
 
+  //
+
   function onPointerMove() {
     if (toolSelected === 'SELECT' || !isPainting.current) return
 
