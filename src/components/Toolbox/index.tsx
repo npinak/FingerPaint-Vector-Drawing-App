@@ -1,13 +1,15 @@
 'use client'
 
-import { Box, Button } from '@mui/material'
+import { Box, Button, Popover } from '@mui/material'
 import React, { useState, useRef, useEffect } from 'react'
 import { select } from '@/store/toolSelection'
+import { SliderPicker } from 'react-color'
 import { useAppDispatch } from '@/utils/TypeScriptHooks'
 import { styled } from '@mui/system'
 import { Pencil, Hand, Circle, Rectangle, ArrowUp } from '@phosphor-icons/react'
-// import { MuiColorInput } from 'mui-color-input' // todo use for color
+import { useAppSelector } from '@/utils/TypeScriptHooks'
 
+import { setColor } from '@/store/toolSelection'
 const StyledButton = styled(Button)({
   height: '10%',
   maxHeight: '50px',
@@ -20,6 +22,10 @@ const StyledButton = styled(Button)({
 function Toolbox() {
   const dispatch = useAppDispatch()
   const [highlightDivPos, setHighlightDivPos] = useState<DOMRect | undefined>()
+  const selectedColor = useAppSelector(state => state.toolSelection.color)
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+  console.log(selectedColor) //todo delete
+
   const buttonDimensionRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -43,6 +49,21 @@ function Toolbox() {
     setHighlightDivPos(newDimensions)
 
     dispatch(select(event.currentTarget.id))
+  }
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const open = Boolean(anchorEl)
+  const id = open ? 'simple-popover' : undefined
+
+  const handleChangeComplete = ({ hex }: { hex: string }) => {
+    dispatch(setColor(hex))
   }
 
   return (
@@ -71,7 +92,58 @@ function Toolbox() {
             'top 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), left 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
         }}
         id='toolbar-button-highlight'
-      ></Box>
+      />
+      <div>
+        <Button
+          sx={{
+            height: '10%',
+            maxHeight: '50px',
+            minHeight: '40px',
+            width: '10%',
+            minWidth: '75px',
+            maxWidth: '75px',
+            border: '3px solid #d1d1d1',
+            backgroundColor: selectedColor,
+          }}
+          aria-describedby={id}
+          variant='contained'
+          onClick={handleClick}
+        >
+          {/* todo change this to div with background of selected color */}
+        </Button>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'center',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'center',
+            horizontal: 'left',
+          }}
+          sx={{ marginLeft: '10px' }}
+        >
+          <Box
+            sx={{
+              width: '300px',
+              // height: '100px',
+              backgroundColor: '#d1d1d1',
+              // display: 'flex',
+              justifyContent: 'center',
+              padding: '15px',
+            }}
+          >
+            <SliderPicker
+              color={selectedColor}
+              onChangeComplete={handleChangeComplete}
+            />
+          </Box>
+        </Popover>
+      </div>
+
       <StyledButton
         ref={buttonDimensionRef}
         onClick={handleToolSelection}
@@ -91,6 +163,7 @@ function Toolbox() {
       <StyledButton id='ARROW' onClick={handleToolSelection}>
         <ArrowUp size={28} color='black' />
       </StyledButton>
+
       {/* <Button id='ERASER' onClick={handleToolSelection}>
         Eraser
       </Button> */}
