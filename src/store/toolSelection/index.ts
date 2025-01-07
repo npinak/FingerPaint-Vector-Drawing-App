@@ -12,11 +12,13 @@ export const ACTIONS = {
 export interface ToolSelectionState {
   value: 'SELECT' | 'RECTANGLE' | 'CIRCLE' | 'SCRIBBLE' | 'ARROW' | 'ERASER'
   color: string
+  strokeWidth: number
 }
 
 const initialState: ToolSelectionState = {
   value: 'RECTANGLE',
   color: '#fff',
+  strokeWidth: 5,
 }
 
 export const ToolSelectionSlice = createSlice({
@@ -29,10 +31,13 @@ export const ToolSelectionSlice = createSlice({
     setColor: (state, action) => {
       state.color = action.payload
     },
+    setStrokeWidth: (state, action) => {
+      state.strokeWidth = action.payload
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { select, setColor } = ToolSelectionSlice.actions
+export const { select, setColor, setStrokeWidth } = ToolSelectionSlice.actions
 
 export default ToolSelectionSlice.reducer

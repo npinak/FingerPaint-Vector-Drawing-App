@@ -11,6 +11,7 @@ import {
   Transformer,
 } from 'react-konva'
 import { useAppSelector } from '@/utils/TypeScriptHooks'
+
 import { v4 as uuidv4 } from 'uuid'
 import type {
   RectangleType,
@@ -28,6 +29,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const isPainting = useRef<boolean>(false)
   const transformerRef = useRef<any>() //fix: find proper type
   const stageContainerRef = useRef<HTMLDivElement>()
+  const strokeWidth = useAppSelector(state => state.toolSelection.strokeWidth)
 
   const currentShapeID = useRef<string>('')
   const strokeColor = '#000'
@@ -35,8 +37,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const fillColor = useAppSelector(state => state.toolSelection.color)
 
   const isDraggable = toolSelected === 'SELECT'
-
-  //
 
   function onPointerMove() {
     if (toolSelected === 'SELECT' || !isPainting.current) return
@@ -74,6 +74,19 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
         })
         break
       case 'SCRIBBLE':
+        setScribbles(scribbles =>
+          scribbles.map(scribble => {
+            if (scribble.ID === currentShapeID.current) {
+              return {
+                ...scribble,
+                points: [...scribble.points, x, y],
+              }
+            }
+            return scribble
+          }),
+        )
+        break
+      case 'ERASER':
         setScribbles(scribbles =>
           scribbles.map(scribble => {
             if (scribble.ID === currentShapeID.current) {
@@ -156,6 +169,22 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             ID,
             points: [x, y],
             fillColor,
+            toolSelected,
+            strokeWidth,
+            // todo add stroke Width
+          },
+        ])
+        break
+      case 'ERASER':
+        setScribbles(scribbles => [
+          ...scribbles,
+          {
+            ID,
+            points: [x, y],
+            fillColor,
+            toolSelected,
+            // todo add stroke width
+            strokeWidth,
           },
         ])
         break
@@ -267,7 +296,8 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               lineJoin='round'
               points={scribble.points}
               stroke={strokeColor}
-              strokeWidth={2}
+              // todo change to variable stroke width
+              strokeWidth={scribble.strokeWidth}
               fill={scribble.fillColor}
               onClick={onClick}
               onMouseEnter={() => {
@@ -280,6 +310,11 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                   stageContainerRef.current.style.cursor = 'default'
                 }
               }}
+              globalCompositeOperation={
+                scribble.toolSelected === 'ERASER'
+                  ? 'destination-out'
+                  : 'source-over'
+              }
             />
           ))}
           {arrows.map(arrow => (
