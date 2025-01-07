@@ -102,54 +102,73 @@ function Toolbox() {
         }}
         id='toolbar-button-highlight'
       />
-      <div>
+      <Box
+        sx={{
+          width: '10%',
+          minWidth: '75px',
+          maxWidth: '75px',
+          display: 'flex',
+
+          backgroundColor: 'red',
+        }}
+      >
         <Button
           sx={{
-            height: '10%',
+            height: '100%',
             maxHeight: '50px',
             minHeight: '40px',
-            width: '10%',
-            minWidth: '75px',
-            maxWidth: '75px',
-            border: '3px solid #d1d1d1',
+            width: '50%',
+            border: '2px solid #d1d1d1',
             backgroundColor: selectedColor,
           }}
           aria-describedby={id}
           variant='contained'
           onClick={handleClick}
-        ></Button>
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'center',
-            horizontal: 'right',
+        />
+        <Button
+          sx={{
+            height: '100%',
+            maxHeight: '50px',
+            minHeight: '40px',
+            width: '50%',
+            border: '2px solid #d1d1d1',
+            backgroundColor: selectedColor,
           }}
-          transformOrigin={{
-            vertical: 'center',
-            horizontal: 'left',
+          aria-describedby={id}
+          variant='contained'
+          onClick={handleClick}
+        />
+      </Box>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'center',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'center',
+          horizontal: 'left',
+        }}
+        sx={{ marginLeft: '10px' }}
+      >
+        <Box
+          sx={{
+            width: '300px',
+            backgroundColor: '#d1d1d1',
+            justifyContent: 'center',
+            padding: '15px',
           }}
-          sx={{ marginLeft: '10px' }}
         >
-          <Box
-            sx={{
-              width: '300px',
-              // height: '100px',
-              backgroundColor: '#d1d1d1',
-              // display: 'flex',
-              justifyContent: 'center',
-              padding: '15px',
-            }}
-          >
-            <SliderPicker
-              color={selectedColor}
-              onChangeComplete={handleChangeComplete}
-            />
-          </Box>
-        </Popover>
-      </div>
+          <SliderPicker
+            color={selectedColor}
+            onChangeComplete={handleChangeComplete}
+          />
+        </Box>
+      </Popover>
+
       <Box
         sx={{
           height: '10%',
