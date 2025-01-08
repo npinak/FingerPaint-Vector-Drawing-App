@@ -11,6 +11,7 @@ import {
   Transformer,
 } from 'react-konva'
 import { useAppSelector } from '@/utils/TypeScriptHooks'
+
 import { v4 as uuidv4 } from 'uuid'
 import type {
   RectangleType,
@@ -28,15 +29,15 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const isPainting = useRef<boolean>(false)
   const transformerRef = useRef<any>() //fix: find proper type
   const stageContainerRef = useRef<HTMLDivElement>()
+  const strokeWidth = useAppSelector(state => state.toolSelection.strokeWidth)
+  const strokeColor = useAppSelector(state => state.toolSelection.strokeColor)
 
   const currentShapeID = useRef<string>('')
-  const strokeColor = '#000'
+
   const toolSelected = useAppSelector(state => state.toolSelection.value)
   const fillColor = useAppSelector(state => state.toolSelection.color)
 
   const isDraggable = toolSelected === 'SELECT'
-
-  //
 
   function onPointerMove() {
     if (toolSelected === 'SELECT' || !isPainting.current) return
@@ -74,6 +75,19 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
         })
         break
       case 'SCRIBBLE':
+        setScribbles(scribbles =>
+          scribbles.map(scribble => {
+            if (scribble.ID === currentShapeID.current) {
+              return {
+                ...scribble,
+                points: [...scribble.points, x, y],
+              }
+            }
+            return scribble
+          }),
+        )
+        break
+      case 'ERASER':
         setScribbles(scribbles =>
           scribbles.map(scribble => {
             if (scribble.ID === currentShapeID.current) {
@@ -129,6 +143,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               height: 0,
               width: 0,
               fillColor,
+              strokeWidth,
             },
           ]
         })
@@ -145,6 +160,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               width: 0,
               radius: 0,
               fillColor,
+              strokeWidth,
             },
           ]
         })
@@ -156,6 +172,20 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             ID,
             points: [x, y],
             fillColor,
+            toolSelected,
+            strokeWidth,
+          },
+        ])
+        break
+      case 'ERASER':
+        setScribbles(scribbles => [
+          ...scribbles,
+          {
+            ID,
+            points: [x, y],
+            fillColor,
+            toolSelected,
+            strokeWidth,
           },
         ])
         break
@@ -166,6 +196,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             ID,
             points: [x, y, x + 20, y + 20],
             fillColor,
+            strokeWidth,
           },
         ])
         break
@@ -214,7 +245,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                 x={rectangle.x}
                 y={rectangle.y}
                 stroke={strokeColor}
-                strokeWidth={2}
+                strokeWidth={rectangle.strokeWidth}
                 fill={rectangle.fillColor}
                 height={rectangle.height}
                 width={rectangle.width}
@@ -239,8 +270,8 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                 draggable={isDraggable}
                 key={circle.ID}
                 stroke={strokeColor}
-                strokeWidth={2}
                 x={circle.x}
+                strokeWidth={circle.strokeWidth}
                 y={circle.y}
                 radius={circle.radius}
                 fill={circle.fillColor}
@@ -267,7 +298,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               lineJoin='round'
               points={scribble.points}
               stroke={strokeColor}
-              strokeWidth={2}
+              strokeWidth={scribble.strokeWidth}
               fill={scribble.fillColor}
               onClick={onClick}
               onMouseEnter={() => {
@@ -280,6 +311,11 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                   stageContainerRef.current.style.cursor = 'default'
                 }
               }}
+              globalCompositeOperation={
+                scribble.toolSelected === 'ERASER'
+                  ? 'destination-out'
+                  : 'source-over'
+              }
             />
           ))}
           {arrows.map(arrow => (
@@ -288,7 +324,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               key={arrow.ID}
               points={arrow.points}
               stroke={strokeColor}
-              strokeWidth={2}
+              strokeWidth={arrow.strokeWidth}
               fill={arrow.fillColor}
               onClick={onClick}
               onMouseEnter={() => {

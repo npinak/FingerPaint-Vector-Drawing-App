@@ -1,12 +1,19 @@
 'use client'
 
-import { Box, Button, Popover } from '@mui/material'
+import { Box, Button, Popover, Slider } from '@mui/material'
 import React, { useState, useRef, useEffect } from 'react'
-import { select } from '@/store/toolSelection'
+import { select, setStrokeWidth, setStrokeColor } from '@/store/toolSelection'
 import { SliderPicker } from 'react-color'
 import { useAppDispatch } from '@/utils/TypeScriptHooks'
 import { styled } from '@mui/system'
-import { Pencil, Hand, Circle, Rectangle, ArrowUp } from '@phosphor-icons/react'
+import {
+  Pencil,
+  Hand,
+  Circle,
+  Rectangle,
+  ArrowUp,
+  Eraser,
+} from '@phosphor-icons/react'
 import { useAppSelector } from '@/utils/TypeScriptHooks'
 
 import { setColor } from '@/store/toolSelection'
@@ -23,9 +30,16 @@ function Toolbox() {
   const dispatch = useAppDispatch()
   const [highlightDivPos, setHighlightDivPos] = useState<DOMRect | undefined>()
   const selectedColor = useAppSelector(state => state.toolSelection.color)
+  const strokeColor = useAppSelector(state => state.toolSelection.strokeColor)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+  const open = Boolean(anchorEl)
+  const id = open ? 'simple-popover' : undefined
 
   const buttonDimensionRef = useRef<HTMLButtonElement>(null)
+
+  const handleStrokeWidth = (_event: Event, value: number | Array<number>) => {
+    dispatch(setStrokeWidth(value))
+  }
 
   useEffect(() => {
     const dimensions = buttonDimensionRef.current?.getBoundingClientRect()
@@ -42,8 +56,6 @@ function Toolbox() {
   // }
 
   const handleToolSelection = (event: React.MouseEvent<HTMLElement>) => {
-    // todo update Ref
-
     const newDimensions = event.currentTarget.getBoundingClientRect()
     setHighlightDivPos(newDimensions)
 
@@ -58,11 +70,12 @@ function Toolbox() {
     setAnchorEl(null)
   }
 
-  const open = Boolean(anchorEl)
-  const id = open ? 'simple-popover' : undefined
-
   const handleChangeComplete = ({ hex }: { hex: string }) => {
-    dispatch(setColor(hex))
+    if (anchorEl?.id === 'stroke-color-button') {
+      dispatch(setStrokeColor(hex))
+    } else {
+      dispatch(setColor(hex))
+    }
   }
 
   return (
@@ -92,54 +105,101 @@ function Toolbox() {
         }}
         id='toolbar-button-highlight'
       />
-      <div>
-        <Button
-          sx={{
-            height: '10%',
+      <Box
+        sx={{
+          width: '10%',
+          minWidth: '75px',
+          maxWidth: '75px',
+          display: 'flex',
+
+          justifyContent: 'space-between',
+        }}
+      >
+        <button
+          style={{
+            height: '100%',
             maxHeight: '50px',
             minHeight: '40px',
-            width: '10%',
-            minWidth: '75px',
-            maxWidth: '75px',
-            border: '3px solid #d1d1d1',
-            backgroundColor: selectedColor,
+            width: '45%',
+            border: '2px solid #d1d1d1',
+            backgroundColor: strokeColor,
           }}
           aria-describedby={id}
-          variant='contained'
+          id='stroke-color-button'
+          // variant='contained'
           onClick={handleClick}
-        ></Button>
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'center',
-            horizontal: 'right',
+        />
+        <button
+          style={{
+            height: '100%',
+            maxHeight: '50px',
+            minHeight: '40px',
+            width: '45%',
+            border: '2px solid #d1d1d1',
+            backgroundColor: selectedColor,
           }}
-          transformOrigin={{
-            vertical: 'center',
-            horizontal: 'left',
+          id='fill-color-button'
+          aria-describedby={id}
+          // variant='contained'
+          onClick={handleClick}
+        />
+      </Box>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'center',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'center',
+          horizontal: 'left',
+        }}
+        sx={{ marginLeft: '10px' }}
+      >
+        <Box
+          sx={{
+            width: '300px',
+            backgroundColor: '#d1d1d1',
+            justifyContent: 'center',
+            padding: '15px',
           }}
-          sx={{ marginLeft: '10px' }}
         >
-          <Box
-            sx={{
-              width: '300px',
-              // height: '100px',
-              backgroundColor: '#d1d1d1',
-              // display: 'flex',
-              justifyContent: 'center',
-              padding: '15px',
-            }}
-          >
-            <SliderPicker
-              color={selectedColor}
-              onChangeComplete={handleChangeComplete}
-            />
-          </Box>
-        </Popover>
-      </div>
+          <SliderPicker
+            color={selectedColor}
+            onChangeComplete={handleChangeComplete}
+          />
+        </Box>
+      </Popover>
+
+      <Box
+        sx={{
+          height: '10%',
+          maxHeight: '50px',
+          minHeight: '40px',
+          width: '10%',
+          minWidth: '75px',
+          maxWidth: '75px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Slider
+          size='small'
+          defaultValue={70}
+          aria-label='Small'
+          valueLabelDisplay='auto'
+          onChange={handleStrokeWidth}
+        />
+      </Box>
+
+      <Box>
+        <StyledButton id='ERASER' onClick={handleToolSelection}>
+          <Eraser size={28} color='black' />
+        </StyledButton>
+      </Box>
 
       <StyledButton
         ref={buttonDimensionRef}
@@ -161,10 +221,6 @@ function Toolbox() {
         <ArrowUp size={28} color='black' />
       </StyledButton>
 
-      {/* <Button id='ERASER' onClick={handleToolSelection}>
-        Eraser
-      </Button> */}
-      {/* <Button>Fill-Color</Button> */}
       {/* <Button>Upload Image</Button> */}
       {/* <Button onClick={handleExport}>Export</Button> */}
     </Box>
