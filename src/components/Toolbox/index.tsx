@@ -221,10 +221,6 @@ function Toolbox() {
         <ArrowUp size={28} color='black' />
       </StyledButton>
 
-      {/* <Button id='ERASER' onClick={handleToolSelection}>
-        Eraser
-      </Button> */}
-      {/* <Button>Fill-Color</Button> */}
       {/* <Button>Upload Image</Button> */}
       {/* <Button onClick={handleExport}>Export</Button> */}
     </Box>

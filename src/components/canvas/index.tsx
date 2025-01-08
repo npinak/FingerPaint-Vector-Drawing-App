@@ -174,7 +174,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             fillColor,
             toolSelected,
             strokeWidth,
-            // todo add stroke Width
           },
         ])
         break
@@ -186,7 +185,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             points: [x, y],
             fillColor,
             toolSelected,
-            // todo add stroke width
             strokeWidth,
           },
         ])
