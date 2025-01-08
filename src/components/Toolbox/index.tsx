@@ -2,7 +2,7 @@
 
 import { Box, Button, Popover, Slider } from '@mui/material'
 import React, { useState, useRef, useEffect } from 'react'
-import { select, setStrokeWidth } from '@/store/toolSelection'
+import { select, setStrokeWidth, setStrokeColor } from '@/store/toolSelection'
 import { SliderPicker } from 'react-color'
 import { useAppDispatch } from '@/utils/TypeScriptHooks'
 import { styled } from '@mui/system'
@@ -30,6 +30,7 @@ function Toolbox() {
   const dispatch = useAppDispatch()
   const [highlightDivPos, setHighlightDivPos] = useState<DOMRect | undefined>()
   const selectedColor = useAppSelector(state => state.toolSelection.color)
+  const strokeColor = useAppSelector(state => state.toolSelection.strokeColor)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
@@ -55,8 +56,6 @@ function Toolbox() {
   // }
 
   const handleToolSelection = (event: React.MouseEvent<HTMLElement>) => {
-    // todo update Ref
-
     const newDimensions = event.currentTarget.getBoundingClientRect()
     setHighlightDivPos(newDimensions)
 
@@ -72,7 +71,11 @@ function Toolbox() {
   }
 
   const handleChangeComplete = ({ hex }: { hex: string }) => {
-    dispatch(setColor(hex))
+    if (anchorEl?.id === 'stroke-color-button') {
+      dispatch(setStrokeColor(hex))
+    } else {
+      dispatch(setColor(hex))
+    }
   }
 
   return (
@@ -109,33 +112,35 @@ function Toolbox() {
           maxWidth: '75px',
           display: 'flex',
 
-          backgroundColor: 'red',
+          justifyContent: 'space-between',
         }}
       >
-        <Button
-          sx={{
+        <button
+          style={{
             height: '100%',
             maxHeight: '50px',
             minHeight: '40px',
-            width: '50%',
+            width: '45%',
             border: '2px solid #d1d1d1',
-            backgroundColor: selectedColor,
+            backgroundColor: strokeColor,
           }}
           aria-describedby={id}
-          variant='contained'
+          id='stroke-color-button'
+          // variant='contained'
           onClick={handleClick}
         />
-        <Button
-          sx={{
+        <button
+          style={{
             height: '100%',
             maxHeight: '50px',
             minHeight: '40px',
-            width: '50%',
+            width: '45%',
             border: '2px solid #d1d1d1',
             backgroundColor: selectedColor,
           }}
+          id='fill-color-button'
           aria-describedby={id}
-          variant='contained'
+          // variant='contained'
           onClick={handleClick}
         />
       </Box>
