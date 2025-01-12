@@ -297,7 +297,8 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               points={scribble.points}
               stroke={strokeColor}
               // todo change to variable stroke width
-              strokeWidth={scribble.strokeWidth}
+              // strokeWidth={scribble.strokeWidth}
+              strokeWidth={100}
               fill={scribble.fillColor}
               onClick={onClick}
               onMouseEnter={() => {

@@ -9,16 +9,27 @@ export const ACTIONS = {
   ERASER: 'ERASER',
 }
 
+type MousePositonType = {
+  x: number
+  y: number
+}
+
 export interface ToolSelectionState {
   value: 'SELECT' | 'RECTANGLE' | 'CIRCLE' | 'SCRIBBLE' | 'ARROW' | 'ERASER'
   color: string
   strokeWidth: number
+  cursorType: string
+  cursorWidth: string | null
+  mousePosition: MousePositonType
 }
 
 const initialState: ToolSelectionState = {
   value: 'RECTANGLE',
   color: '#fff',
   strokeWidth: 5,
+  cursorType: 'scribble',
+  cursorWidth: null,
+  mousePosition: { x: 0, y: 0 },
 }
 
 export const ToolSelectionSlice = createSlice({
@@ -34,10 +45,14 @@ export const ToolSelectionSlice = createSlice({
     setStrokeWidth: (state, action) => {
       state.strokeWidth = action.payload
     },
+    setMouseXY: (state, action) => {
+      state.mousePosition = action.payload
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { select, setColor, setStrokeWidth } = ToolSelectionSlice.actions
+export const { select, setColor, setStrokeWidth, setMouseXY } =
+  ToolSelectionSlice.actions
 
 export default ToolSelectionSlice.reducer
