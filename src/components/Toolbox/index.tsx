@@ -170,6 +170,13 @@ function Toolbox() {
           onChange={handleStrokeWidth}
         />
       </Box>
+      <StyledButton
+        ref={buttonDimensionRef}
+        onClick={handleToolSelection}
+        id='SCRIBBLE'
+      >
+        <Pencil size={28} color='black' />
+      </StyledButton>
 
       <Box>
         <StyledButton id='ERASER' onClick={handleToolSelection}>
@@ -177,16 +184,10 @@ function Toolbox() {
         </StyledButton>
       </Box>
 
-      <StyledButton
-        ref={buttonDimensionRef}
-        onClick={handleToolSelection}
-        id='SELECT'
-      >
+      <StyledButton onClick={handleToolSelection} id='SELECT'>
         <Hand size={28} color='black' />
       </StyledButton>
-      <StyledButton onClick={handleToolSelection} id='SCRIBBLE'>
-        <Pencil size={28} color='black' />
-      </StyledButton>
+
       <StyledButton id='CIRCLE' onClick={handleToolSelection}>
         <Circle size={28} color='black' />
       </StyledButton>

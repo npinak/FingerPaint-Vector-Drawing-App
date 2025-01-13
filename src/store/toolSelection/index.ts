@@ -24,7 +24,7 @@ export interface ToolSelectionState {
 }
 
 const initialState: ToolSelectionState = {
-  value: 'RECTANGLE',
+  value: 'SCRIBBLE',
   color: '#fff',
   strokeWidth: 5,
   cursorType: 'scribble',

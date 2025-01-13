@@ -6,7 +6,8 @@ import React, { useEffect, useRef } from 'react'
 import styles from './page.module.css'
 import { setMouseXY } from '@/store/toolSelection'
 import { useAppDispatch, useAppSelector } from '@/utils/TypeScriptHooks'
-import { motion } from 'motion/react'
+
+// note: largest z-index in this file is 50
 
 // todo width of scribble
 // width of eraser
