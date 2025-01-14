@@ -12,12 +12,14 @@ import { useAppDispatch, useAppSelector } from '@/utils/TypeScriptHooks'
 // todo width of scribble
 // width of eraser
 // change cursor type based on which tool is selected
-//
+// when cursor hovers on navbar, make it normal pointer
 export default function Home() {
   const stageRef = useRef<any>()
 
   const dispatch = useAppDispatch()
-  const { mousePosition } = useAppSelector(state => state.toolSelection)
+  const { mousePosition, strokeWidth } = useAppSelector(
+    state => state.toolSelection,
+  )
   useEffect(() => {
     const mouseMove = (e: MouseEvent) => {
       const mouseXY = {
@@ -41,9 +43,12 @@ export default function Home() {
         <nav></nav>
       </header>
       <div
+        id='cursor'
         style={{
-          top: mousePosition.y,
-          left: mousePosition.x,
+          top: mousePosition.y - strokeWidth / 2,
+          left: mousePosition.x - strokeWidth / 2,
+          height: `${strokeWidth}px`,
+          width: `${strokeWidth}px`,
           zIndex: 50,
         }}
         className={styles.cursor}
