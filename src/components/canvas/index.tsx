@@ -10,8 +10,8 @@ import {
   Arrow,
   Transformer,
 } from 'react-konva'
-import { useAppSelector } from '@/utils/TypeScriptHooks'
-
+import { useAppSelector, useAppDispatch } from '@/utils/TypeScriptHooks'
+import { setDrawingCursor } from '@/store/toolSelection'
 import { v4 as uuidv4 } from 'uuid'
 import type {
   RectangleType,
@@ -31,6 +31,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const stageContainerRef = useRef<HTMLDivElement>()
   const strokeWidth = useAppSelector(state => state.toolSelection.strokeWidth)
   const strokeColor = useAppSelector(state => state.toolSelection.strokeColor)
+  const dispatch = useAppDispatch()
 
   const currentShapeID = useRef<string>('')
 
@@ -210,6 +211,8 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
     transformerRef.current?.nodes([target])
   }
 
+  console.log(toolSelected)
+
   return (
     <Box
       id='canvas-div'
@@ -218,6 +221,15 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
         height: '100%',
         width: '100%',
         backgroundColor: '#ffffff',
+        cursor: `${
+          toolSelected !== 'SCRIBBLE' || 'ERASER' ? 'crosshair' : 'none'
+        }`,
+      }}
+      onMouseOver={() => {
+        dispatch(setDrawingCursor(true))
+      }}
+      onMouseOut={() => {
+        dispatch(setDrawingCursor(false))
       }}
     >
       <Stage
@@ -260,6 +272,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                     stageContainerRef.current.style.cursor = 'default'
                   }
                 }}
+                globalCompositeOperation='source-over'
               />
             )
           })}
@@ -286,6 +299,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                     stageContainerRef.current.style.cursor = 'default'
                   }
                 }}
+                globalCompositeOperation='source-over'
               />
             )
           })}
@@ -337,6 +351,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                   stageContainerRef.current.style.cursor = 'default'
                 }
               }}
+              globalCompositeOperation='source-over'
             />
           ))}
           <Transformer ref={transformerRef} />

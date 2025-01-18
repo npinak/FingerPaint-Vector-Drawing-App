@@ -31,6 +31,7 @@ function Toolbox() {
   const [highlightDivPos, setHighlightDivPos] = useState<DOMRect | undefined>()
   const selectedColor = useAppSelector(state => state.toolSelection.color)
   const strokeColor = useAppSelector(state => state.toolSelection.strokeColor)
+  const strokeWidth = useAppSelector(state => state.toolSelection.strokeWidth)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
@@ -188,12 +189,19 @@ function Toolbox() {
       >
         <Slider
           size='small'
-          defaultValue={70}
+          defaultValue={strokeWidth}
           aria-label='Small'
           valueLabelDisplay='auto'
           onChange={handleStrokeWidth}
         />
       </Box>
+      <StyledButton
+        ref={buttonDimensionRef}
+        onClick={handleToolSelection}
+        id='SCRIBBLE'
+      >
+        <Pencil size={28} color='black' />
+      </StyledButton>
 
       <Box>
         <StyledButton id='ERASER' onClick={handleToolSelection}>
@@ -201,16 +209,10 @@ function Toolbox() {
         </StyledButton>
       </Box>
 
-      <StyledButton
-        ref={buttonDimensionRef}
-        onClick={handleToolSelection}
-        id='SELECT'
-      >
+      <StyledButton onClick={handleToolSelection} id='SELECT'>
         <Hand size={28} color='black' />
       </StyledButton>
-      <StyledButton onClick={handleToolSelection} id='SCRIBBLE'>
-        <Pencil size={28} color='black' />
-      </StyledButton>
+
       <StyledButton id='CIRCLE' onClick={handleToolSelection}>
         <Circle size={28} color='black' />
       </StyledButton>
