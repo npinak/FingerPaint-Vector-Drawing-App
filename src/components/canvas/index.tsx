@@ -10,8 +10,8 @@ import {
   Arrow,
   Transformer,
 } from 'react-konva'
-import { useAppSelector } from '@/utils/TypeScriptHooks'
-
+import { useAppSelector, useAppDispatch } from '@/utils/TypeScriptHooks'
+import { setDrawingCursor } from '@/store/toolSelection'
 import { v4 as uuidv4 } from 'uuid'
 import type {
   RectangleType,
@@ -30,9 +30,11 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const transformerRef = useRef<any>() //fix: find proper type
   const stageContainerRef = useRef<HTMLDivElement>()
   const strokeWidth = useAppSelector(state => state.toolSelection.strokeWidth)
+  const strokeColor = useAppSelector(state => state.toolSelection.strokeColor)
+  const dispatch = useAppDispatch()
 
   const currentShapeID = useRef<string>('')
-  const strokeColor = '#000'
+
   const toolSelected = useAppSelector(state => state.toolSelection.value)
   const fillColor = useAppSelector(state => state.toolSelection.color)
 
@@ -142,6 +144,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               height: 0,
               width: 0,
               fillColor,
+              strokeWidth,
             },
           ]
         })
@@ -158,6 +161,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               width: 0,
               radius: 0,
               fillColor,
+              strokeWidth,
             },
           ]
         })
@@ -171,7 +175,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             fillColor,
             toolSelected,
             strokeWidth,
-            // todo add stroke Width
           },
         ])
         break
@@ -183,7 +186,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             points: [x, y],
             fillColor,
             toolSelected,
-            // todo add stroke width
             strokeWidth,
           },
         ])
@@ -195,6 +197,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             ID,
             points: [x, y, x + 20, y + 20],
             fillColor,
+            strokeWidth,
           },
         ])
         break
@@ -208,6 +211,8 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
     transformerRef.current?.nodes([target])
   }
 
+  console.log(toolSelected)
+
   return (
     <Box
       id='canvas-div'
@@ -216,6 +221,15 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
         height: '100%',
         width: '100%',
         backgroundColor: '#ffffff',
+        cursor: `${
+          toolSelected !== 'SCRIBBLE' || 'ERASER' ? 'crosshair' : 'none'
+        }`,
+      }}
+      onMouseOver={() => {
+        dispatch(setDrawingCursor(true))
+      }}
+      onMouseOut={() => {
+        dispatch(setDrawingCursor(false))
       }}
     >
       <Stage
@@ -243,7 +257,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                 x={rectangle.x}
                 y={rectangle.y}
                 stroke={strokeColor}
-                strokeWidth={2}
+                strokeWidth={rectangle.strokeWidth}
                 fill={rectangle.fillColor}
                 height={rectangle.height}
                 width={rectangle.width}
@@ -258,6 +272,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                     stageContainerRef.current.style.cursor = 'default'
                   }
                 }}
+                globalCompositeOperation='source-over'
               />
             )
           })}
@@ -268,8 +283,8 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                 draggable={isDraggable}
                 key={circle.ID}
                 stroke={strokeColor}
-                strokeWidth={2}
                 x={circle.x}
+                strokeWidth={circle.strokeWidth}
                 y={circle.y}
                 radius={circle.radius}
                 fill={circle.fillColor}
@@ -284,6 +299,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                     stageContainerRef.current.style.cursor = 'default'
                   }
                 }}
+                globalCompositeOperation='source-over'
               />
             )
           })}
@@ -296,9 +312,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               lineJoin='round'
               points={scribble.points}
               stroke={strokeColor}
-              // todo change to variable stroke width
-              // strokeWidth={scribble.strokeWidth}
-              strokeWidth={100}
+              strokeWidth={scribble.strokeWidth}
               fill={scribble.fillColor}
               onClick={onClick}
               onMouseEnter={() => {
@@ -324,7 +338,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               key={arrow.ID}
               points={arrow.points}
               stroke={strokeColor}
-              strokeWidth={2}
+              strokeWidth={arrow.strokeWidth}
               fill={arrow.fillColor}
               onClick={onClick}
               onMouseEnter={() => {
@@ -337,6 +351,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                   stageContainerRef.current.style.cursor = 'default'
                 }
               }}
+              globalCompositeOperation='source-over'
             />
           ))}
           <Transformer ref={transformerRef} />

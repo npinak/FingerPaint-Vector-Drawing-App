@@ -17,7 +17,7 @@ export default function Home() {
   const stageRef = useRef<any>()
 
   const dispatch = useAppDispatch()
-  const { mousePosition, strokeWidth } = useAppSelector(
+  const { mousePosition, strokeWidth, drawingCursor, value } = useAppSelector(
     state => state.toolSelection,
   )
   useEffect(() => {
@@ -45,6 +45,11 @@ export default function Home() {
       <div
         id='cursor'
         style={{
+          display: `${
+            drawingCursor && (value === 'SCRIBBLE' || value === 'ERASER')
+              ? 'block'
+              : 'none'
+          }`,
           top: mousePosition.y - strokeWidth / 2,
           left: mousePosition.x - strokeWidth / 2,
           height: `${strokeWidth}px`,

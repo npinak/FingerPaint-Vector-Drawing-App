@@ -5,18 +5,21 @@ export type RectangleType = {
   height: number
   width: number
   fillColor: string
+  strokeWidth: number
 }
 
 export type ArrowType = {
   ID: string
   points: number[]
   fillColor: string
+  strokeWidth: number
 }
 
 export type CircleType = {
   ID: string
   x: number
   y: number
+  strokeWidth: number
   height: number
   width: number
   fillColor: string

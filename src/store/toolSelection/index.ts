@@ -21,6 +21,8 @@ export interface ToolSelectionState {
   cursorType: string
   cursorWidth: string | null
   mousePosition: MousePositonType
+  strokeColor: string
+  drawingCursor: boolean
 }
 
 const initialState: ToolSelectionState = {
@@ -30,6 +32,8 @@ const initialState: ToolSelectionState = {
   cursorType: 'scribble',
   cursorWidth: null,
   mousePosition: { x: 0, y: 0 },
+  strokeColor: '#000000',
+  drawingCursor: true,
 }
 
 export const ToolSelectionSlice = createSlice({
@@ -48,11 +52,23 @@ export const ToolSelectionSlice = createSlice({
     setMouseXY: (state, action) => {
       state.mousePosition = action.payload
     },
+    setStrokeColor: (state, action) => {
+      state.strokeColor = action.payload
+    },
+    setDrawingCursor: (state, action) => {
+      state.drawingCursor = action.payload
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { select, setColor, setStrokeWidth, setMouseXY } =
-  ToolSelectionSlice.actions
+export const {
+  select,
+  setColor,
+  setStrokeWidth,
+  setMouseXY,
+  setStrokeColor,
+  setDrawingCursor,
+} = ToolSelectionSlice.actions
 
 export default ToolSelectionSlice.reducer
