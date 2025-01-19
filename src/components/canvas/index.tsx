@@ -33,15 +33,25 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const strokeColor = useAppSelector(state => state.toolSelection.strokeColor)
   const dispatch = useAppDispatch()
 
+  const [menuPosition, setMenuPosition] = useState<{
+    mouseX: number
+    mouseY: number
+  } | null>(null)
+
+  const rightClick = useRef(false)
+
   const currentShapeID = useRef<string>('')
 
   const toolSelected = useAppSelector(state => state.toolSelection.value)
   const fillColor = useAppSelector(state => state.toolSelection.color)
 
+  console.log(toolSelected) //todo delete
+
   const isDraggable = toolSelected === 'SELECT'
 
   function onPointerMove() {
-    if (toolSelected === 'SELECT' || !isPainting.current) return
+    if (toolSelected === 'SELECT' || !isPainting.current || rightClick.current)
+      return
 
     const stage = stageRef.current
     const { x, y } = stage.getPointerPosition()
@@ -122,7 +132,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   }
 
   function onPointerDown() {
-    if (toolSelected === 'SELECT') return
+    if (toolSelected === 'SELECT' || rightClick.current) return
 
     const stage = stageRef.current
     const { x, y } = stage.getPointerPosition()
@@ -209,11 +219,21 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
     }
   }
 
-  function onClick(e: KonvaEventObject<MouseEvent>) {
-    if (toolSelected !== 'SELECT') return
+  function onClick(e: KonvaEventObject<MouseEvent>, isLine?: boolean) {
+    if (toolSelected !== 'SELECT' || isLine) return
+
+    setMenuPosition({ mouseX: e.evt.clientX, mouseY: e.evt.clientY })
     const target = e.currentTarget
 
     transformerRef.current?.nodes([target])
+  }
+
+  // Handle menu close
+  const handleClose = (event: React.MouseEvent) => {
+    if (event.button === 1) {
+      rightClick.current = false
+    }
+    setMenuPosition(null)
   }
 
   return (
@@ -235,6 +255,19 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
         dispatch(setDrawingCursor(false))
       }}
     >
+      <Menu
+        open={!!menuPosition}
+        onClose={handleClose}
+        anchorReference='anchorPosition'
+        anchorPosition={
+          menuPosition
+            ? { top: menuPosition.mouseY, left: menuPosition.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={handleClose}>Delete</MenuItem>
+      </Menu>
+
       <Stage
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -334,7 +367,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
         <Layer>
           {scribbles.map(scribble => (
             <Line
-              // bug: draggable is disabled until bring to front/back is added.
+              // note: draggable is disabled until bring to front/back is added.
               // draggable={isDraggable}
               key={scribble.ID}
               lineCap='round'

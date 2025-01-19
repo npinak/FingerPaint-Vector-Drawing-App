@@ -1,6 +1,15 @@
 'use client'
 
-import { Box, Button, Popover, Slider } from '@mui/material'
+import {
+  Box,
+  Button,
+  Popover,
+  Slider,
+  Switch,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+} from '@mui/material'
 import React, { useState, useRef, useEffect } from 'react'
 import { select, setStrokeWidth, setStrokeColor } from '@/store/toolSelection'
 import { SliderPicker } from 'react-color'
@@ -13,6 +22,7 @@ import {
   Rectangle,
   ArrowUp,
   Eraser,
+  Trash,
 } from '@phosphor-icons/react'
 import { useAppSelector } from '@/utils/TypeScriptHooks'
 
@@ -35,6 +45,7 @@ function Toolbox() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
+  const [alignment, setAlignment] = React.useState<string | null>('select')
 
   const buttonDimensionRef = useRef<HTMLButtonElement>(null)
 
@@ -48,6 +59,7 @@ function Toolbox() {
   }, [])
 
   // const _handleExport =() => {
+  // note: implement export
   //   const uri = stageRef.current.toDataURL()
   //   const link = document.createElement('a')
   //   link.href = uri
@@ -57,6 +69,7 @@ function Toolbox() {
   // }
 
   const handleToolSelection = (event: React.MouseEvent<HTMLElement>) => {
+    setAlignment(null)
     const newDimensions = event.currentTarget.getBoundingClientRect()
     setHighlightDivPos(newDimensions)
 
@@ -79,6 +92,14 @@ function Toolbox() {
     }
   }
 
+  const handleAlignment = (
+    _event: React.MouseEvent<HTMLElement>,
+    newAlignment: string | null,
+  ) => {
+    setAlignment(newAlignment)
+    dispatch(select(newAlignment === 'select' ? 'SELECT' : 'DELETE'))
+  }
+
   return (
     <Box
       sx={{
@@ -94,7 +115,11 @@ function Toolbox() {
     >
       <Box
         sx={{
-          backgroundColor: 'secondary.main',
+          backgroundColor: `${
+            alignment === 'delete' || alignment === 'select'
+              ? '#00000000'
+              : 'secondary.main'
+          }`,
           width: `${highlightDivPos?.width}px`,
           height: `${highlightDivPos?.height}px`,
           position: 'absolute',
@@ -209,10 +234,31 @@ function Toolbox() {
         </StyledButton>
       </Box>
 
-      <StyledButton onClick={handleToolSelection} id='SELECT'>
-        <Hand size={28} color='black' />
-      </StyledButton>
-
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'column',
+        }}
+      >
+        <ToggleButtonGroup
+          value={alignment}
+          exclusive
+          onChange={handleAlignment}
+          aria-label='text alignment'
+        >
+          <Tooltip title='Select Shapes'>
+            <ToggleButton value='select' aria-label='centered'>
+              <Hand size={18} />
+            </ToggleButton>
+          </Tooltip>
+          <Tooltip title='Delete Shapes'>
+            <ToggleButton value='delete' aria-label='left aligned'>
+              <Trash size={18} />
+            </ToggleButton>
+          </Tooltip>
+        </ToggleButtonGroup>
+      </Box>
       <StyledButton id='CIRCLE' onClick={handleToolSelection}>
         <Circle size={28} color='black' />
       </StyledButton>
