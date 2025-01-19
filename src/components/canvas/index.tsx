@@ -1,5 +1,5 @@
 'use client'
-import { Box } from '@mui/material'
+import { Box, Menu, MenuItem } from '@mui/material'
 import React, { useRef, useState } from 'react'
 import {
   Stage,
@@ -216,8 +216,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
     transformerRef.current?.nodes([target])
   }
 
-  console.log(toolSelected)
-
   return (
     <Box
       id='canvas-div'
@@ -336,7 +334,8 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
         <Layer>
           {scribbles.map(scribble => (
             <Line
-              draggable={isDraggable}
+              // bug: draggable is disabled until bring to front/back is added.
+              // draggable={isDraggable}
               key={scribble.ID}
               lineCap='round'
               lineJoin='round'
@@ -344,17 +343,17 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               stroke={scribble.strokeColor}
               strokeWidth={scribble.strokeWidth}
               fill={scribble.fillColor}
-              onClick={onClick}
-              onMouseEnter={() => {
-                if (stageContainerRef.current && toolSelected === 'SELECT') {
-                  stageContainerRef.current.style.cursor = 'pointer'
-                }
-              }}
-              onMouseLeave={() => {
-                if (stageContainerRef.current && toolSelected === 'SELECT') {
-                  stageContainerRef.current.style.cursor = 'default'
-                }
-              }}
+              onClick={e => onClick(e, true)}
+              // onMouseEnter={() => {
+              //   if (stageContainerRef.current && toolSelected === 'SELECT') {
+              //     stageContainerRef.current.style.cursor = 'pointer'
+              //   }
+              // }}
+              // onMouseLeave={() => {
+              //   if (stageContainerRef.current && toolSelected === 'SELECT') {
+              //     stageContainerRef.current.style.cursor = 'default'
+              //   }
+              // }}
               globalCompositeOperation={
                 scribble.toolSelected === 'ERASER'
                   ? 'destination-out'
@@ -362,7 +361,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               }
             />
           ))}
-          <Transformer ref={transformerRef} />
+          {/* <Transformer ref={transformerRef} /> */}
         </Layer>
       </Stage>
     </Box>
