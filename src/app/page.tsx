@@ -39,7 +39,7 @@ export default function Home() {
 
   return (
     <main id='main-page' style={{ height: '100%', width: '100%' }}>
-      <header style={{ backgroundColor: 'red', height: '50px' }}>
+      <header style={{ backgroundColor: '#F3F4F7', height: '50px' }}>
         <nav></nav>
       </header>
       <div

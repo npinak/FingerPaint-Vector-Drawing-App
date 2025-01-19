@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+import AppInfoSlice from './appInfo'
 import ToolSelectionSlice from '@/store/toolSelection'
 
 // ...
@@ -6,6 +7,7 @@ import ToolSelectionSlice from '@/store/toolSelection'
 export const store = configureStore({
   reducer: {
     toolSelection: ToolSelectionSlice,
+    appInfo: AppInfoSlice,
   },
 })
 
