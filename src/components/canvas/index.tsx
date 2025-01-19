@@ -45,8 +45,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const toolSelected = useAppSelector(state => state.toolSelection.value)
   const fillColor = useAppSelector(state => state.toolSelection.color)
 
-  console.log(toolSelected) //todo delete
-
   const isDraggable = toolSelected === 'SELECT'
 
   function onPointerMove() {
@@ -219,13 +217,50 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
     }
   }
 
-  function onClick(e: KonvaEventObject<MouseEvent>, isLine?: boolean) {
+  function onClick(
+    e: KonvaEventObject<MouseEvent>,
+    isLine?: boolean,
+    shapeInfo?: Record<string, string>,
+  ) {
+    if (shapeInfo && toolSelected === 'DELETE') {
+      deleteShape(shapeInfo)
+    }
+
     if (toolSelected !== 'SELECT' || isLine) return
 
+    // when clicking, look at shape type and remove them from the canvas using its ID
+
     setMenuPosition({ mouseX: e.evt.clientX, mouseY: e.evt.clientY })
+
     const target = e.currentTarget
 
     transformerRef.current?.nodes([target])
+  }
+
+  const deleteShape = (shapeInfo: Record<string, string>) => {
+    const { id, shape } = shapeInfo
+
+    switch (shape) {
+      case 'circle':
+        const filteredCircles = circles.filter(circle => {
+          return circle.ID !== id
+        })
+
+        setCircles(filteredCircles)
+        break
+      case 'rectangle':
+        const filteredRectangles = rectangles.filter(rectangle => {
+          return rectangle.ID !== id
+        })
+
+        setRectangles(filteredRectangles)
+      case 'arrow':
+        const filteredArrows = arrows.filter(arrow => {
+          return arrow.ID !== id
+        })
+
+        setArrows(filteredArrows)
+    }
   }
 
   // Handle menu close
@@ -292,12 +327,14 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                 key={rectangle.ID}
                 x={rectangle.x}
                 y={rectangle.y}
-                stroke={strokeColor}
+                stroke={rectangle.strokeColor}
                 strokeWidth={rectangle.strokeWidth}
                 fill={rectangle.fillColor}
                 height={rectangle.height}
                 width={rectangle.width}
-                onClick={onClick}
+                onClick={e =>
+                  onClick(e, false, { id: rectangle.ID, shape: 'rectangle' })
+                }
                 onMouseEnter={() => {
                   if (stageContainerRef.current && toolSelected === 'SELECT') {
                     stageContainerRef.current.style.cursor = 'pointer'
@@ -318,13 +355,15 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               <Circle
                 draggable={isDraggable}
                 key={circle.ID}
-                stroke={strokeColor}
+                stroke={circle.strokeColor}
                 x={circle.x}
                 strokeWidth={circle.strokeWidth}
                 y={circle.y}
                 radius={circle.radius}
                 fill={circle.fillColor}
-                onClick={onClick}
+                onClick={e =>
+                  onClick(e, false, { id: circle.ID, shape: 'circle' })
+                }
                 onMouseEnter={() => {
                   if (stageContainerRef.current && toolSelected === 'SELECT') {
                     stageContainerRef.current.style.cursor = 'pointer'
@@ -345,10 +384,10 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               draggable={isDraggable}
               key={arrow.ID}
               points={arrow.points}
-              stroke={strokeColor}
+              stroke={arrow.strokeColor}
               strokeWidth={arrow.strokeWidth}
               fill={arrow.fillColor}
-              onClick={onClick}
+              onClick={e => onClick(e, false, { id: arrow.ID, shape: 'arrow' })}
               onMouseEnter={() => {
                 if (stageContainerRef.current && toolSelected === 'SELECT') {
                   stageContainerRef.current.style.cursor = 'pointer'
