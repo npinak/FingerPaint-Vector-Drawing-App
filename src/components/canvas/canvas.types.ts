@@ -6,6 +6,7 @@ export type RectangleType = {
   width: number
   fillColor: string
   strokeWidth: number
+  strokeColor: string
 }
 
 export type ArrowType = {
@@ -13,6 +14,7 @@ export type ArrowType = {
   points: number[]
   fillColor: string
   strokeWidth: number
+  strokeColor: string
 }
 
 export type CircleType = {
@@ -24,6 +26,7 @@ export type CircleType = {
   width: number
   fillColor: string
   radius: number
+  strokeColor: string
 }
 
 export type ScribbleType = {
@@ -32,4 +35,5 @@ export type ScribbleType = {
   fillColor: string
   toolSelected: string
   strokeWidth: number
+  strokeColor: string
 }

@@ -145,6 +145,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               width: 0,
               fillColor,
               strokeWidth,
+              strokeColor,
             },
           ]
         })
@@ -162,6 +163,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               radius: 0,
               fillColor,
               strokeWidth,
+              strokeColor,
             },
           ]
         })
@@ -175,6 +177,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             fillColor,
             toolSelected,
             strokeWidth,
+            strokeColor,
           },
         ])
         break
@@ -187,6 +190,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             fillColor,
             toolSelected,
             strokeWidth,
+            strokeColor,
           },
         ])
         break
@@ -198,6 +202,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             points: [x, y, x + 20, y + 20],
             fillColor,
             strokeWidth,
+            strokeColor,
           },
         ])
         break
@@ -304,34 +309,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             )
           })}
 
-          {scribbles.map(scribble => (
-            <Line
-              draggable={isDraggable}
-              key={scribble.ID}
-              lineCap='round'
-              lineJoin='round'
-              points={scribble.points}
-              stroke={strokeColor}
-              strokeWidth={scribble.strokeWidth}
-              fill={scribble.fillColor}
-              onClick={onClick}
-              onMouseEnter={() => {
-                if (stageContainerRef.current && toolSelected === 'SELECT') {
-                  stageContainerRef.current.style.cursor = 'pointer'
-                }
-              }}
-              onMouseLeave={() => {
-                if (stageContainerRef.current && toolSelected === 'SELECT') {
-                  stageContainerRef.current.style.cursor = 'default'
-                }
-              }}
-              globalCompositeOperation={
-                scribble.toolSelected === 'ERASER'
-                  ? 'destination-out'
-                  : 'source-over'
-              }
-            />
-          ))}
           {arrows.map(arrow => (
             <Arrow
               draggable={isDraggable}
@@ -352,6 +329,37 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                 }
               }}
               globalCompositeOperation='source-over'
+            />
+          ))}
+          <Transformer ref={transformerRef} />
+        </Layer>
+        <Layer>
+          {scribbles.map(scribble => (
+            <Line
+              draggable={isDraggable}
+              key={scribble.ID}
+              lineCap='round'
+              lineJoin='round'
+              points={scribble.points}
+              stroke={scribble.strokeColor}
+              strokeWidth={scribble.strokeWidth}
+              fill={scribble.fillColor}
+              onClick={onClick}
+              onMouseEnter={() => {
+                if (stageContainerRef.current && toolSelected === 'SELECT') {
+                  stageContainerRef.current.style.cursor = 'pointer'
+                }
+              }}
+              onMouseLeave={() => {
+                if (stageContainerRef.current && toolSelected === 'SELECT') {
+                  stageContainerRef.current.style.cursor = 'default'
+                }
+              }}
+              globalCompositeOperation={
+                scribble.toolSelected === 'ERASER'
+                  ? 'destination-out'
+                  : 'source-over'
+              }
             />
           ))}
           <Transformer ref={transformerRef} />
