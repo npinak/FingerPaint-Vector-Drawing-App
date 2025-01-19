@@ -33,11 +33,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const strokeColor = useAppSelector(state => state.toolSelection.strokeColor)
   const dispatch = useAppDispatch()
 
-  const [menuPosition, setMenuPosition] = useState<{
-    mouseX: number
-    mouseY: number
-  } | null>(null)
-
   const rightClick = useRef(false)
 
   const currentShapeID = useRef<string>('')
@@ -228,10 +223,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
 
     if (toolSelected !== 'SELECT' || isLine) return
 
-    // when clicking, look at shape type and remove them from the canvas using its ID
-
-    setMenuPosition({ mouseX: e.evt.clientX, mouseY: e.evt.clientY })
-
     const target = e.currentTarget
 
     transformerRef.current?.nodes([target])
@@ -263,14 +254,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
     }
   }
 
-  // Handle menu close
-  const handleClose = (event: React.MouseEvent) => {
-    if (event.button === 1) {
-      rightClick.current = false
-    }
-    setMenuPosition(null)
-  }
-
   return (
     <Box
       id='canvas-div'
@@ -290,19 +273,6 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
         dispatch(setDrawingCursor(false))
       }}
     >
-      <Menu
-        open={!!menuPosition}
-        onClose={handleClose}
-        anchorReference='anchorPosition'
-        anchorPosition={
-          menuPosition
-            ? { top: menuPosition.mouseY, left: menuPosition.mouseX }
-            : undefined
-        }
-      >
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
-      </Menu>
-
       <Stage
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}

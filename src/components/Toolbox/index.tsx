@@ -104,8 +104,8 @@ function Toolbox() {
     <Box
       sx={{
         height: '100%',
-        width: '8%',
-        maxWidth: '100px',
+        width: '120px',
+
         backgroundColor: '#E7E9EE',
         display: 'flex',
         justifyContent: 'space-evenly',

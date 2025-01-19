@@ -36,7 +36,7 @@ export interface ToolSelectionState {
 const initialState: ToolSelectionState = {
   value: 'SCRIBBLE',
   color: '#fff',
-  strokeWidth: 5,
+  strokeWidth: 30,
   cursorType: 'scribble',
   cursorWidth: null,
   mousePosition: { x: 0, y: 0 },
