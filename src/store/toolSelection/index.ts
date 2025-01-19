@@ -7,6 +7,7 @@ export const ACTIONS = {
   SCRIBBLE: 'SCRIBBLE',
   ARROW: 'ARROW',
   ERASER: 'ERASER',
+  DELETE: 'DELETE',
 }
 
 type MousePositonType = {
@@ -15,7 +16,14 @@ type MousePositonType = {
 }
 
 export interface ToolSelectionState {
-  value: 'SELECT' | 'RECTANGLE' | 'CIRCLE' | 'SCRIBBLE' | 'ARROW' | 'ERASER'
+  value:
+    | 'SELECT'
+    | 'RECTANGLE'
+    | 'CIRCLE'
+    | 'SCRIBBLE'
+    | 'ARROW'
+    | 'ERASER'
+    | 'DELETE'
   color: string
   strokeWidth: number
   cursorType: string
