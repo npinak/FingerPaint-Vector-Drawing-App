@@ -18,8 +18,15 @@ import type {
   CircleType,
   ScribbleType,
   ArrowType,
+  ShapeType,
 } from './canvas.types'
 import { KonvaEventObject } from 'konva/lib/Node'
+import { shapes } from 'konva/lib/Shape'
+import { SearchParamsContext } from 'next/dist/shared/lib/hooks-client-context.shared-runtime'
+
+// have to refactor so that all the shapes are stored in one array
+
+
 
 function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const [rectangles, setRectangles] = useState<RectangleType[]>([])
@@ -32,6 +39,10 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
   const strokeWidth = useAppSelector(state => state.toolSelection.strokeWidth)
   const strokeColor = useAppSelector(state => state.toolSelection.strokeColor)
   const dispatch = useAppDispatch()
+
+  const [shapesArray, setShapesArray] = useState<ShapeType[]>([])
+
+  
 
   const rightClick = useRef(false)
 
@@ -51,45 +62,57 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
 
     switch (toolSelected) {
       case 'RECTANGLE':
-        setRectangles(rectangles => {
-          return rectangles.map(rectangle => {
-            if (rectangle.ID === currentShapeID.current) {
-              return {
-                ...rectangle,
-                width: x - rectangle.x,
-                height: y - rectangle.y,
+      setShapesArray(shapesArray => {
+        return shapesArray.map(shape => {
+          if (shape.shapeData.ID === currentShapeID.current){
+            return {
+              ...shape,
+              shapeData:{
+                ...shape.shapeData,
+                //@ts-ignore -- x will exist for rectangle
+                width: x - shape.shapeData.x,
+                //@ts-ignore -- y will exist for rectangle
+                height: y - shape.shapeData.y
               }
             }
-            return rectangle
-          })
+          }
+          return shape
         })
+      })
+      
         break
       case 'CIRCLE':
-        setCircles(circles => {
-          return circles.map(circle => {
-            if (circle.ID === currentShapeID.current) {
+        setShapesArray(shapesArray => {
+          return shapesArray.map(shape => {
+            if (shape.shapeData.ID === currentShapeID.current){
               return {
-                ...circle,
-
-                radius: ((y - circle.y) ** 2 + (x - circle.x) ** 2) ** 0.5,
+                ...shape,
+                shapeData:{
+                  ...shape.shapeData,
+                  //@ts-ignore -- x will exist for circle
+                  width: x - shape.shapeData.x,
+                  //@ts-ignore -- y will exist for circle
+                  height: y - shape.shapeData.y
+                }
               }
             }
-            return circle
+            return shape
           })
         })
         break
       case 'SCRIBBLE':
-        setScribbles(scribbles =>
-          scribbles.map(scribble => {
-            if (scribble.ID === currentShapeID.current) {
-              return {
-                ...scribble,
-                points: [...scribble.points, x, y],
-              }
-            }
-            return scribble
-          }),
-        )
+        // setScribbles(scribbles =>
+        //   scribbles.map(scribble => {
+        //     if (scribble.ID === currentShapeID.current) {
+        //       return {
+        //         ...scribble,
+        //         points: [...scribble.points, x, y],
+        //       }
+        //     }
+        //     return scribble
+        //   }),
+        // )
+        
         break
       case 'ERASER':
         setScribbles(scribbles =>
@@ -137,10 +160,15 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
 
     switch (toolSelected) {
       case 'RECTANGLE':
-        setRectangles(rectangles => {
-          return [
-            ...rectangles,
-            {
+
+      //info: this function adds new Shapes
+
+      setShapesArray(shapesArray => {
+        return [
+          ...shapesArray,
+          {
+            shapeType: 'rectangle',
+            shapeData: {
               ID,
               x,
               y,
@@ -150,8 +178,9 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
               strokeWidth,
               strokeColor,
             },
-          ]
-        })
+          },
+        ]
+      })
         break
       case 'CIRCLE':
         setCircles(circles => {
@@ -290,7 +319,7 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
             fill='#ffffff'
             id='bg'
           />
-          {rectangles.map(rectangle => {
+          {/* {rectangles.map(rectangle => {
             return (
               <Rect
                 draggable={isDraggable}
@@ -318,6 +347,43 @@ function Canvas({ stageRef }: { stageRef: React.MutableRefObject<any> }) {
                 globalCompositeOperation='source-over'
               />
             )
+          })} */}
+
+
+          {shapesArray.map(shape => {
+            if (shape.shapeType === 'rectangle'){
+              return (
+                <Rect
+                draggable={isDraggable}
+                key={shape.shapeData.ID}
+                //@ts-ignore -- x will exist for rectangle
+                x={shape.shapeData.x}
+                //@ts-ignore -- y will exist for rectangle
+                y={shape.shapeData.y}
+                stroke={shape.shapeData.strokeColor}
+                strokeWidth={shape.shapeData.strokeWidth}
+                fill={shape.shapeData.fillColor}
+                //@ts-ignore
+                height={shape.shapeData.height}
+                //@ts-ignore -- width will exist for rectangle
+                width={shape.shapeData.width}
+                onClick={e =>
+                  onClick(e, false, { id: shape.shapeData.ID, shape: 'rectangle' })
+                }
+                onMouseEnter={() => {
+                  if (stageContainerRef.current && toolSelected === 'SELECT') {
+                    stageContainerRef.current.style.cursor = 'pointer'
+                  }
+                }}
+                onMouseLeave={() => {
+                  if (stageContainerRef.current && toolSelected === 'SELECT') {
+                    stageContainerRef.current.style.cursor = 'default'
+                  }
+                }}
+                globalCompositeOperation='source-over'
+              />
+              )
+            }
           })}
 
           {circles.map(circle => {

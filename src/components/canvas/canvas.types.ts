@@ -1,7 +1,7 @@
 export type RectangleType = {
   ID: string
-  x: number
-  y: number
+  x?: number
+  y?: number
   height: number
   width: number
   fillColor: string
@@ -19,8 +19,8 @@ export type ArrowType = {
 
 export type CircleType = {
   ID: string
-  x: number
-  y: number
+  x?: number
+  y?: number
   strokeWidth: number
   height: number
   width: number
@@ -36,4 +36,12 @@ export type ScribbleType = {
   toolSelected: string
   strokeWidth: number
   strokeColor: string
+}
+
+
+
+export type ShapeType = {
+  shapeType: "rectangle" | "arrow" | "circle" | "scribble"
+  shape: RectangleType | ArrowType | CircleType | ScribbleType
+
 }

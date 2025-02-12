@@ -141,34 +141,38 @@ function Toolbox() {
           justifyContent: 'space-between',
         }}
       >
-        <button
-          style={{
-            height: '100%',
-            maxHeight: '50px',
-            minHeight: '40px',
-            width: '45%',
-            border: '2px solid #d1d1d1',
-            backgroundColor: strokeColor,
-          }}
-          aria-describedby={id}
-          id='stroke-color-button'
-          // variant='contained'
-          onClick={handleClick}
-        />
-        <button
-          style={{
-            height: '100%',
-            maxHeight: '50px',
-            minHeight: '40px',
-            width: '45%',
-            border: '2px solid #d1d1d1',
-            backgroundColor: selectedColor,
-          }}
-          id='fill-color-button'
-          aria-describedby={id}
-          // variant='contained'
-          onClick={handleClick}
-        />
+        <Tooltip title='Select Stroke Color'>
+          <button
+            style={{
+              height: '100%',
+              maxHeight: '50px',
+              minHeight: '40px',
+              width: '45%',
+              border: '2px solid #d1d1d1',
+              backgroundColor: strokeColor,
+            }}
+            aria-describedby={id}
+            id='stroke-color-button'
+            // variant='contained'
+            onClick={handleClick}
+          />
+        </Tooltip>
+        <Tooltip title='Select Fill Color'>
+          <button
+            style={{
+              height: '100%',
+              maxHeight: '50px',
+              minHeight: '40px',
+              width: '45%',
+              border: '2px solid #d1d1d1',
+              backgroundColor: selectedColor,
+            }}
+            id='fill-color-button'
+            aria-describedby={id}
+            // variant='contained'
+            onClick={handleClick}
+          />
+        </Tooltip>
       </Box>
       <Popover
         id={id}
